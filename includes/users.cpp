@@ -1,6 +1,15 @@
 #include "users.hpp"
 
-void Users::generate_users(int number) {
+Users::Users(int count) {
+    for (int i = 0; i < count; i++) {
+        string name = "UserNr- " + std::to_string(i+1);
+        int balance = RND::getIntegerInRange(MINBALANCE, MAXBALANCE);
+        User user(name, balance);
+        this->users.push_back(user);
+    }
+}
+
+void Users::generateUsers(int number) {
     for (int i = 0; i < number; i++) {
         User user("UserNr-" + std::to_string(i+1), RND::getIntegerInRange(MINBALANCE, MAXBALANCE));
 

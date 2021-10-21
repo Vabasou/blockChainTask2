@@ -12,7 +12,10 @@ class Users {
         vector<User> users;
 
     public:
-        void generate_users(int);
+        Users(int count = 1000);
+        void generateUsers(int);
         string toSString();
         User* getRandomUser();
+        User *getPoorest();
+        User *getRichest();
 };
