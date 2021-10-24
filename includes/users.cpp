@@ -2,7 +2,7 @@
 
 Users::Users(int count) {
     for (int i = 0; i < count; i++) {
-        string name = "UserNr- " + std::to_string(i+1);
+        string name = "UserNr-" + std::to_string(i+1);
         int balance = RND::getIntegerInRange(MINBALANCE, MAXBALANCE);
         User user(name, balance);
         this->users.push_back(user);
@@ -17,14 +17,6 @@ void Users::generateUsers(int number) {
             return u.getPublicKey() == user.getPublicKey();
         });
 
-        while (it != users.end()) {
-            User user("UserNr-" + std::to_string(i), RND::getIntegerInRange(MINBALANCE, MAXBALANCE));
-
-            it = std::find_if(users.begin(), users.end(), [&user](User &u) {
-                return u.getPublicKey() == user.getPublicKey();
-            });
-        }
-
         users.push_back(user);
     }
 }
@@ -35,6 +27,8 @@ string Users::toSString() {
         stream << "Name:            " << user.getName() << endl;
         stream << "Publick key:     " << user.getPublicKey() << endl;
         stream << "Current balance: " << user.getBalance() << endl;
+        stream << string(50, '*') << endl;
+        stream << endl;
     }
 
     return stream.str();

@@ -8,7 +8,7 @@ class Block {
     private:
         string blockHash;
         string prevBlockHash;
-        string timestamp;
+        int timestamp;
         string merkleRoot;
         int nonce = 0;
         vector<Transaction> transactions;

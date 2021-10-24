@@ -26,7 +26,7 @@ int Blockchain::countTransactions() {
 
 string Blockchain::toSString() {
     stringstream stream;
-    stream << endl << string(50, '50') << endl;
+    stream << endl << string(50, '-') << endl;
     stream << "Blockchain info:" << endl;
     stream << "Block count: " << getChainSize() << endl;
     stream << "Transaction count: " << countTransactions() << endl;

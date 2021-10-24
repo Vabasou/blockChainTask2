@@ -13,7 +13,7 @@ class Users {
 
     public:
         Users(int count = 1000);
-        void generateUsers(int);
+        void generateUsers(int number);
         string toSString();
         User* getRandomUser();
         User *getPoorest();

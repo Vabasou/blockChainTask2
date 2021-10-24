@@ -1,47 +1,74 @@
 #include "includes/libraries.hpp"
-//#include "includes/hash.hpp"
+#include "includes/user.hpp"
+#include "includes/users.hpp"
+#include "includes/transaction.hpp"
 #include "includes/block.hpp"
+#include "includes/blockchain.hpp"
+#include "includes/record.hpp"
+#include "includes/transactionPool.hpp"
 
 int main() {
-    Blockchain letsTry;  
 
-    time_t current;
-    TransactionData data;
-    data.amount = 1000;
-    data.receiverKey = "Noneasdf";
-    data.senderKey = "Noneasdf";
-    data.timestamp = time(&current);
+    int userNumber = 1000;
+    int transactionNumber = 10000;
+    int blockTransactions = 100;
+    int difficulty = 2;
+    int index = 1;
 
-    string hash1 = "None";
-    Block niceBlock(0, data, myHash(hash1));  
+    Blockchain blockchain;
+    Users users;
+    TransactionPool pool;
 
-    niceBlock.mineBlock();
+    cout << "Generating (" << userNumber << ") users..." << endl;
+    users.generateUsers(userNumber);
+    saveToFile(users.toSString(), "results/usersBeginning.txt");
+    cout << "Completed!" << endl;
+    cout << endl;
 
-    // TransactionData data1;
-    // time_t data1Time;
-    // data1.amount = 100;
-    // data1.receiverKey = "Joe";
-    // data1.senderKey = "Sally";
-    // data1.timestamp = time(&data1Time);
+    cout << "Generating (" << transactionNumber << ") transactions..." << endl;
+    pool.generateTransactionPool(users, transactionNumber);
+    saveToFile(pool.to_SString(), "results/poolBeggining.txt");
+    cout << "Completed!" << endl;
 
-    // letsTry.addBlock(data1);
+    string genesisBlockHash = myHash("Pirmas blokas");
+    string prevBlockHash;
 
-    // cout << "Is chain valid? " << letsTry.isChainValid() << endl;
+    stringstream stream;
+    
+    while(pool.getTransactionNumber() > 0) {
+        if (!blockchain.isEmpty()) {
+            prevBlockHash = blockchain.getLastBlockHash();
+        }
+        else {
+            prevBlockHash = genesisBlockHash;
+        }
 
-    // TransactionData data2;
-    // time_t data2Time;
-    // data2.amount = 10000;
-    // data2.receiverKey = "Johaness";
-    // data2.senderKey = "Sallyalksjdghf";
-    // data2.timestamp = time(&data2Time);
+        Block block(prevBlockHash, difficulty, 1.0);
 
-    // letsTry.addBlock(data2);
+        vector<Transaction> transactions;
+        transactions = pool.getTransactions(blockTransactions);
+        block.addTransactions(transactions);
 
-    // cout << "Is chain still valid? " << letsTry.isChainValid() << endl;
+        cout << "Mining block: " << index << endl;
+        block.mine();
+        cout << "Mining completed" << endl;
 
-    // Block *hackBlock = letsTry.getLatestBlock();
-    // hackBlock->data.amount = 3000000;
-    // hackBlock->data.receiverKey = "Jon";
+        pool.removeTransactions(transactions);
 
-    // cout << "Now is the cahin still valid?: "<< letsTry.isChainValid() << endl;
+        for(Transaction &temp : block.getTransactions()) {
+            temp.execute();
+        }
+
+        blockchain.addBlock(block);
+
+        stream << "Block index: " << index << endl;
+        stream << block.toSString();
+        stream << string(50, '-') << endl;
+
+        index++;
+    }
+
+    saveToFile(stream.str(), "results/blocks.txt");
+    saveToFile(pool.to_SString(), "results/poolEnding.txt");
+    saveToFile(users.toSString(), "results/usersEnding.txt");
 }

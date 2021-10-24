@@ -24,6 +24,7 @@ string Block::getMerkleRoot() {
     for (Transaction &t : transactions) {
         stream << t.getId();
     }
+
     return myHash(stream.str());
 }
 
@@ -38,6 +39,7 @@ void Block::mine() {
 
     cout << "Block mined:" << blockHash << endl;
 }
+
 void Block::addTransactions(vector<Transaction> &t) {
     for (Transaction &temp : t) {
         transactions.push_back(temp);
@@ -49,7 +51,7 @@ vector<Transaction> Block::getTransactions() {
 }
 
 string Block::getTimestamp() {
-    return this->timestamp;
+    return std::to_string(this->timestamp);
 }
 
 string Block::getBlockHash() {
@@ -72,16 +74,16 @@ string Block::toSString() {
     stream << "Merkle root:   " << this->getMerkleRoot() << endl;
     stream << "Version:       " << this->version << endl;
     stream << "Nonce:         " << this->nonce << endl;
-    stream << "Transactions (" << this->transactions.size() << "): " << endl;
+    stream << "Transactions  (" << this->transactions.size() << ")" << endl;
 
-    int index = 0;
-    for (auto &transaction : this->transactions) {
-        stream << "__________" << endl;
-        stream << "index:    " << index << endl;
-        stream << transaction.toSString();
+    // int index = 0;
+    // for (auto &transaction : this->transactions) {
+    //     stream << "__________" << endl;
+    //     stream << "index:    " << index << endl;
+    //     stream << transaction.toSString();
 
-        index++;
-    }
+    //     index++;
+    // }
 
     return stream.str();
 }

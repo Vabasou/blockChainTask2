@@ -8,8 +8,10 @@ Transaction::Transaction(User *sender, User *receiver, int amount) {
 }
 
 void Transaction::execute() {
-    this->sender->withdrawMoney(this->amount);
-    this->receiver->addMoney(this->amount);
+    if (this->sender->getBalance() >= this->amount) {
+        this->sender->withdrawMoney(this->amount);
+        this->receiver->addMoney(this->amount);
+    }
 }
 
 string Transaction::getId() {
