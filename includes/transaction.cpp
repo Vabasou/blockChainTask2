@@ -4,7 +4,7 @@ Transaction::Transaction(User *sender, User *receiver, int amount) {
     this->sender = sender;
     this->receiver = receiver;
     this->amount = amount;
-    this->transactionId = myHash(sender->getName() + receiver->getName() + std::to_string(amount));
+    this->transactionId = getHash();
 }
 
 void Transaction::execute() {
@@ -12,6 +12,10 @@ void Transaction::execute() {
         this->sender->withdrawMoney(this->amount);
         this->receiver->addMoney(this->amount);
     }
+}
+
+string Transaction::getHash() {
+    return myHash(sender->getName() + receiver->getName() + std::to_string(amount));
 }
 
 string Transaction::getId() {
@@ -36,6 +40,10 @@ string Transaction::getSendersHash() {
 
 int Transaction::getAmount() {
     return amount;
+}
+
+bool Transaction::isHashValid() {
+    return this->getId() == this->getHash();
 }
 
 string Transaction::toSString() {

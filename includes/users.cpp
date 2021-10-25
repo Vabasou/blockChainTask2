@@ -1,23 +1,11 @@
 #include "users.hpp"
 
-Users::Users(int count) {
-    for (int i = 0; i < count; i++) {
+Users::Users(int number) {
+    for (int i = 0; i < number; i++) {
         string name = "UserNr-" + std::to_string(i+1);
         int balance = RND::getIntegerInRange(MINBALANCE, MAXBALANCE);
         User user(name, balance);
         this->users.push_back(user);
-    }
-}
-
-void Users::generateUsers(int number) {
-    for (int i = 0; i < number; i++) {
-        User user("UserNr-" + std::to_string(i+1), RND::getIntegerInRange(MINBALANCE, MAXBALANCE));
-
-        vector<User>::iterator it = std::find_if(users.begin(), users.end(), [&user](User &u) {
-            return u.getPublicKey() == user.getPublicKey();
-        });
-
-        users.push_back(user);
     }
 }
 

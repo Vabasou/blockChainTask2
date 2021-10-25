@@ -16,4 +16,5 @@ class TransactionPool {
         void removeTransaction(Transaction &);
         void removeTransactions(vector<Transaction>&);
         string to_SString();
+        void checkIdAndExecute();
 };

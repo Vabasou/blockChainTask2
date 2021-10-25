@@ -1,6 +1,7 @@
 #pragma once
 #include "libraries.hpp"
 #include "hash.hpp"
+#include "sha256.h"
 #include "RND.hpp"
 #include "transaction.hpp"
 
@@ -8,7 +9,7 @@ class Block {
     private:
         string blockHash;
         string prevBlockHash;
-        int timestamp;
+        string timestamp;
         string merkleRoot;
         int nonce = 0;
         vector<Transaction> transactions;

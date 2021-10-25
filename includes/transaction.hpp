@@ -15,10 +15,12 @@ class Transaction {
         void execute();
         
         string getId();
+        string getHash();
         User* getSender();
         User* getReceiver();
         string getSendersHash();
         string getReceiversHash();
         int getAmount();
         string toSString();
+        bool isHashValid();
 };

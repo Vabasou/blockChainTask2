@@ -1,11 +1,17 @@
 #include "block.hpp"
 
+using namespace std::chrono;
+
 Block::Block(string prevBlockHash, int difficulty, double version) {
     using namespace std::chrono;
     this->prevBlockHash = prevBlockHash;
     this->difficulty = difficulty;
     this->version = version;
-    timestamp = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+    auto start = std::chrono::system_clock::now();
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+    timestamp = std::ctime(&end_time);
 }
 
 void Block::addTransaction(Transaction &transaction) {
@@ -51,13 +57,13 @@ vector<Transaction> Block::getTransactions() {
 }
 
 string Block::getTimestamp() {
-    return std::to_string(this->timestamp);
+    return this->timestamp;
 }
 
 string Block::getBlockHash() {
     stringstream stream;
-    stream << this->prevBlockHash << this->getTimestamp() << this->difficulty << this->version << this->nonce << this->getMerkleRoot();
-    return myHash(stream.str());
+    stream << this->prevBlockHash << this->timestamp << this->difficulty << this->version << this->nonce << this->getMerkleRoot();
+    return sha256(stream.str());
 }
 
 int Block::getTransactionNumber() {
@@ -69,21 +75,12 @@ string Block::toSString() {
 
     stream << "Hash:          " << this->getBlockHash() << endl;
     stream << "Previous hash: " << this->prevBlockHash << endl;
-    stream << "Timestamp:     " << this->getTimestamp() << endl;
+    stream << "Timestamp:     " << this->getTimestamp();
     stream << "Difficulty:    " << this->difficulty << endl;
     stream << "Merkle root:   " << this->getMerkleRoot() << endl;
     stream << "Version:       " << this->version << endl;
     stream << "Nonce:         " << this->nonce << endl;
     stream << "Transactions  (" << this->transactions.size() << ")" << endl;
-
-    // int index = 0;
-    // for (auto &transaction : this->transactions) {
-    //     stream << "__________" << endl;
-    //     stream << "index:    " << index << endl;
-    //     stream << transaction.toSString();
-
-    //     index++;
-    // }
 
     return stream.str();
 }

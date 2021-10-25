@@ -15,6 +15,7 @@
 #include <chrono>
 #include <exception>
 #include <bitset>
+#include <ctime>
 
 using std::cout;
 using std::cin;

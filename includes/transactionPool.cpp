@@ -11,11 +11,6 @@ void TransactionPool::generateTransactionPool(Users& users, int number) {
         int amount = RND::getIntegerInRange(0, sender->getBalance());
         Transaction transaction(sender, receiver, amount);
 
-        vector<Transaction>::iterator it;
-        it = std::find_if(transactionPool.begin(), transactionPool.end(), [&transaction](Transaction &tran) {
-            return tran.getId() == transaction.getId();
-        });
-
         this->transactionPool.push_back(transaction);
     }
 }
@@ -52,6 +47,18 @@ void TransactionPool::removeTransaction(Transaction &transaction) {
 void TransactionPool::removeTransactions(vector<Transaction> &transaction) {
     for (Transaction &temp : transaction) {
         removeTransaction(temp);
+    }
+}
+
+void TransactionPool::checkIdAndExecute() {
+    vector<Transaction>::iterator it;
+    it = this->transactionPool.begin();
+    
+    while (it != this->transactionPool.end()) {
+        if (it->isHashValid()) {
+            it->execute();
+            ++it;
+        }
     }
 }
 
