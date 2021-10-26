@@ -16,11 +16,10 @@ int main() {
     int index = 1;
 
     Blockchain blockchain;
-    Users users;
     TransactionPool pool;
 
     cout << "Generating (" << userNumber << ") users..." << endl;
-    users.generateUsers(userNumber);
+    Users users(userNumber);
     saveToFile(users.toSString(), "results/usersBeginning.txt");
     cout << "Completed!" << endl;
     cout << endl;
@@ -50,14 +49,15 @@ int main() {
         block.addTransactions(transactions);
 
         cout << "Mining block: " << index << endl;
+        auto start = std::chrono::high_resolution_clock::now();
         block.mine();
+        auto end = std::chrono::high_resolution_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(end - start);
         cout << "Mining completed" << endl;
+        cout << elapsed.count() << endl;
 
         pool.removeTransactions(transactions);
-
-        for(Transaction &temp : block.getTransactions()) {
-            temp.execute();
-        }
+        pool.checkIdAndExecute();
 
         blockchain.addBlock(block);
 
