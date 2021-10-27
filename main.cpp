@@ -7,7 +7,7 @@
 #include "includes/record.hpp"
 #include "includes/transactionPool.hpp"
 
-void mineBlocks(Block &block, int numOfCandidates, vector<Transaction> &transactions) {
+void mineBlocks(Block &block, int numOfCandidates, vector<Transaction> &transactions, int nblockTransactions) {
     vector <Block> blocks;
     blocks.reserve(numOfCandidates);
     for (int i = 0; i < numOfCandidates; i++) {
@@ -15,7 +15,7 @@ void mineBlocks(Block &block, int numOfCandidates, vector<Transaction> &transact
     }
 
     for (Block &block : blocks) {
-
+        block.addTransactions(transactions);
     }
 }
 
