@@ -21,6 +21,7 @@ class Block {
         string getMerkleRoot();
         void addTransactions(vector<Transaction> &);
         void addTransaction(Transaction &);
+        void mineMultipleBlocks(vector<Transaction> &candidates);
         void mine();
         string getBlockHash();
         vector<Transaction> getTransactions();
@@ -28,7 +29,9 @@ class Block {
         string getTimestamp();
         int getTransactionNumber();
         int getTransactionVolumr();
+        bool tryToMine();
 
-        int difficulty = 4;
+        int tries = 10000;
+        int difficulty;
         double version = 1.0;
 };

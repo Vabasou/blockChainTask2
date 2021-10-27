@@ -26,53 +26,63 @@ void Block::addTransaction(Transaction &transaction) {
 }
 
 string Block::getMerkleRoot() {
-    stringstream stream;
+    vector<string> currentLayer;
+    vector<string> nextLayer;
+
     for (Transaction &t : transactions) {
-        stream << t.getId();
+        currentLayer.push_back(t.getId());
     }
-    return myHash(stream.str());
+
+    int numOfLevels = ceil(log2(currentLayer.size()));
+
+    for(int i = 0; i < numOfLevels; i++) {
+        if(currentLayer.size() % 2 != 0) {
+            currentLayer.push_back(currentLayer.back());
+        }
+
+        for(int j = 0; j < currentLayer.size(); j += 2) {
+            nextLayer.push_back(myHash(myHash(currentLayer[j])+myHash(currentLayer[j+1])));
+        }
+
+        currentLayer.clear();
+        currentLayer = nextLayer;
+        nextLayer.clear();
+    }
+
+    return currentLayer[0];
 }
 
-// string Block::getMerkleRoot() {
-//     vector<string> currentLayer;
-//     vector<string> nextLayer;
-
-//     for (Transaction &t : transactions) {
-//         currentLayer.push_back(t.getId());
-//     }
-
-//     int numOfLevels = ceil(log2(currentLayer.size()));
-
-//     for(int i = 0; i < numOfLevels; i++) {
-//         if(currentLayer.size() % 2 != 0) {
-//             currentLayer.push_back(currentLayer.back());
-//         }
-
-//         for(int j = 0; j < currentLayer.size(); j += 2) {
-//             nextLayer.push_back(myHash(myHash(currentLayer[j])+myHash(currentLayer[j+1])));
-//         }
-
-//         currentLayer.clear();
-//         currentLayer = nextLayer;
-//         nextLayer.clear();
-//     }
-
-//     return currentLayer[0];
-// }
-
-// void Block::mineMultipleBlocks() {
-
-// }
-
-void Block::mine() {
-    int numOfTries = 10000;
+bool Block::tryToMine() {
     this->merkleRoot = this->getMerkleRoot();
     string startString(this->difficulty, '0');
 
-    do {
+    int iteration = 0;
+    while (blockHash.substr(0, difficulty) != startString) {
+        this->nonce++;
+        iteration++;
+        if (iteration == tries) {
+            return false;
+        }
+    }
+}
+
+void Block::mineMultipleBlocks(vector<Transaction> &candidates) {
+
+    
+}
+
+void Block::mine() {
+    this->merkleRoot = this->getMerkleRoot();
+    string startString(this->difficulty, '0');
+
+    int iteration = 0;
+    while (blockHash.substr(0, difficulty) != startString) {
         nonce++;
-        blockHash = getBlockHash();
-    } while (blockHash.substr(0, difficulty) != startString);
+        iteration++;
+        if (iteration < tries) {
+            blockHash = getBlockHash();
+        }
+    } 
 
     cout << "Block mined:" << blockHash << endl;
 }

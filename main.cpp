@@ -7,6 +7,18 @@
 #include "includes/record.hpp"
 #include "includes/transactionPool.hpp"
 
+void mineBlocks(Block &block, int numOfCandidates, vector<Transaction> &transactions) {
+    vector <Block> blocks;
+    blocks.reserve(numOfCandidates);
+    for (int i = 0; i < numOfCandidates; i++) {
+        blocks.emplace_back(block);
+    }
+
+    for (Block &block : blocks) {
+
+    }
+}
+
 int main() {
 
     int userNumber = 1000;
@@ -14,6 +26,7 @@ int main() {
     int blockTransactions = 100;
     int difficulty = 2;
     int index = 1;
+    int numOfCandidates = 5;
 
     Blockchain blockchain;
     TransactionPool pool;
@@ -46,6 +59,7 @@ int main() {
 
         vector<Transaction> transactions;
         transactions = pool.getTransactions(blockTransactions);
+
         block.addTransactions(transactions);
 
         cout << "Mining block: " << index << endl;
