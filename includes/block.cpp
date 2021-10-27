@@ -30,38 +30,42 @@ string Block::getMerkleRoot() {
     for (Transaction &t : transactions) {
         stream << t.getId();
     }
-
     return myHash(stream.str());
 }
 
-string Block::getMerkleRoot() {
-    vector<string> currentLayer;
-    vector<string> nextLayer;
+// string Block::getMerkleRoot() {
+//     vector<string> currentLayer;
+//     vector<string> nextLayer;
 
-    for (Transaction &t : transactions) {
-        currentLayer.push_back(t.getId());
-    }
+//     for (Transaction &t : transactions) {
+//         currentLayer.push_back(t.getId());
+//     }
 
-    int numOfLevels = ceil(log2(currentLayer.size()));
+//     int numOfLevels = ceil(log2(currentLayer.size()));
 
-    for(int i = 0; i < numOfLevels; i++) {
-        if(currentLayer.size() % 2 != 0) {
-            currentLayer.push_back(currentLayer.back());
-        }
+//     for(int i = 0; i < numOfLevels; i++) {
+//         if(currentLayer.size() % 2 != 0) {
+//             currentLayer.push_back(currentLayer.back());
+//         }
 
-        for(int j = 0; j < currentLayer.size(); j += 2) {
-            nextLayer.push_back(myHash(myHash(currentLayer[j])+myHash(currentLayer[j+1])));
-        }
+//         for(int j = 0; j < currentLayer.size(); j += 2) {
+//             nextLayer.push_back(myHash(myHash(currentLayer[j])+myHash(currentLayer[j+1])));
+//         }
 
-        currentLayer.clear();
-        currentLayer = nextLayer;
-        nextLayer.clear();
-    }
+//         currentLayer.clear();
+//         currentLayer = nextLayer;
+//         nextLayer.clear();
+//     }
 
-    return currentLayer[0];
-}
+//     return currentLayer[0];
+// }
+
+// void Block::mineMultipleBlocks() {
+
+// }
 
 void Block::mine() {
+    int numOfTries = 10000;
     this->merkleRoot = this->getMerkleRoot();
     string startString(this->difficulty, '0');
 
