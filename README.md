@@ -1,4 +1,4 @@
-# blockChainTask2 V0.1
+# blockChainTask2 V0.2
 
 ## Task
 
@@ -41,7 +41,7 @@ To run the program, write in command line:
 
 ---
 
-## Operation of the program
+## Operation of the program V0.1
 
 - Generates users and assigns them random balance between 100 and 1000000. Data is saved in `results/usersBeginning.txt` file
 - Generate random transaction pool. Data is saved in `results/poolBeggining.txt` file
@@ -55,4 +55,21 @@ To run the program, write in command line:
     - `results/blocks.txt` to see mined blocks and their information
     - `results/poolEnding.txt` to see if the transaction pool is really empty
     - `results/usersEnding.txt` to see users info after transactions
+
+---
+
+## Operation of the program V0.2
+
+- Generates users and assigns them random balance between 100 and 1000000. Data is saved in `results/usersBeginning.txt` file
+- Generate random transaction pool. Data is saved in `results/poolBeggining.txt` file
+- Start the loop:
+    - Create the transaction candidates and add transactions to the blocks
+    - Mine blocks with fixed attempts, if mining was unsuccessful, tyr to mine other candidate until one block is mined
+    - Delete transactions, that were put inside the block
+    - Put block in the blockchain
+    - Repeat cycle until the are no more transactions
+- In the end there are created three more files:
+    - `results/blocks.txt` to see mined blocks and their information
+    - `results/poolEnding.txt` to see if the transaction pool is really empty
+    - `results/usersEnding.txt` to see users info after the transactions
 

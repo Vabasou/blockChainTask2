@@ -2,27 +2,31 @@
 
 using namespace std::chrono;
 
-Block::Block(string prevBlockHash, int difficulty, double version) {
+Block::Block() {
+}
+
+Block::Block(string prevBlockHash, int difficulty) {
     using namespace std::chrono;
+    this->isMined = false;
     this->prevBlockHash = prevBlockHash;
     this->difficulty = difficulty;
     this->version = version;
     auto start = std::chrono::system_clock::now();
     auto end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::chrono::duration<double> elapsed_seconds = end - start;
     std::time_t end_time = std::chrono::system_clock::to_time_t(end);
     timestamp = std::ctime(&end_time);
 }
 
 void Block::addTransaction(Transaction &transaction) {
     vector<Transaction>::iterator it;
-    it = find_if(this->transactions.begin(), this->transactions.end(), [&transaction](Transaction &t) {
-    return t.getId() == transaction.getId();
-  });
+    it = find_if(this->transactions.begin(), this->transactions.end(), [&transaction](Transaction &t) { 
+            return t.getId() == transaction.getId(); 
+        });
 
-  if (it == transactions.end()) {
-      transactions.push_back(transaction);
-  }
+    if (it == transactions.end()) {
+        transactions.push_back(transaction);
+    }
 }
 
 string Block::getMerkleRoot() {
@@ -35,13 +39,13 @@ string Block::getMerkleRoot() {
 
     int numOfLevels = ceil(log2(currentLayer.size()));
 
-    for(int i = 0; i < numOfLevels; i++) {
-        if(currentLayer.size() % 2 != 0) {
-            currentLayer.push_back(currentLayer.back());
+    for (int i = 0; i < numOfLevels; i++) {
+        if (currentLayer.size() % 2 != 0) {
+        currentLayer.push_back(currentLayer.back());
         }
 
-        for(int j = 0; j < currentLayer.size(); j += 2) {
-            nextLayer.push_back(myHash(myHash(currentLayer[j])+myHash(currentLayer[j+1])));
+        for (int j = 0; j < currentLayer.size(); j += 2) {
+        nextLayer.push_back(myHash(myHash(currentLayer[j]) + myHash(currentLayer[j + 1])));
         }
 
         currentLayer.clear();
@@ -52,39 +56,20 @@ string Block::getMerkleRoot() {
     return currentLayer[0];
 }
 
-bool Block::tryToMine() {
+void Block::mineBlock() {
     this->merkleRoot = this->getMerkleRoot();
     string startString(this->difficulty, '0');
 
-    int iteration = 0;
-    while (blockHash.substr(0, difficulty) != startString) {
-        this->nonce++;
-        iteration++;
-        if (iteration == tries) {
-            return false;
+    for (int i = 0; i < attempts; i++) {
+        nonce++;
+        blockHash = getBlockHash();
+
+        if (blockHash.substr(0, difficulty) == startString) {
+        cout << "Bloko hash: " << blockHash << endl;
+        isMined = true;
+        return;
         }
     }
-}
-
-void Block::mineMultipleBlocks(vector<Transaction> &candidates) {
-
-    
-}
-
-void Block::mine() {
-    this->merkleRoot = this->getMerkleRoot();
-    string startString(this->difficulty, '0');
-
-    int iteration = 0;
-    while (blockHash.substr(0, difficulty) != startString) {
-        nonce++;
-        iteration++;
-        if (iteration < tries) {
-            blockHash = getBlockHash();
-        }
-    } 
-
-    cout << "Block mined:" << blockHash << endl;
 }
 
 void Block::addTransactions(vector<Transaction> &t) {
@@ -93,7 +78,7 @@ void Block::addTransactions(vector<Transaction> &t) {
     }
 }
 
-vector<Transaction> Block::getTransactions() {
+vector<Transaction> &Block::getTransactions() {
     return this->transactions;
 }
 
@@ -123,5 +108,14 @@ string Block::toSString() {
     stream << "Nonce:         " << this->nonce << endl;
     stream << "Transactions  (" << this->transactions.size() << ")" << endl;
 
-    return stream.str();
+    int index = 0;
+    for (Transaction &transaction : this->transactions) {
+        stream << "---------" << endl;
+        stream << "index:   " << index << endl;
+        stream << transaction.toSString();
+
+        index++;
+    }
+
+  return stream.str();
 }

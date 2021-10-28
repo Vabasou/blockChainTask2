@@ -24,7 +24,7 @@ vector<Transaction> TransactionPool::getTransactions(int number) {
     int times = std::min(number, getTransactionNumber());
 
     for (int i = 0; i < times; i++) {
-        transactions.push_back(getTransaction(i));
+        transactions.push_back(getTransaction(RND::getIntegerInRange(0, getTransactionNumber())));
     }
     return transactions;
 }

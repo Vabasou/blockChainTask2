@@ -7,6 +7,7 @@ class Blockchain {
         vector<Block> blocks;
 
         void addBlock(Block &);
+        Block getRandomBlock();
         int countTransactions();
         bool isEmpty();
         string getLastBlockHash();

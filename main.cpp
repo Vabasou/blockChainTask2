@@ -7,18 +7,6 @@
 #include "includes/record.hpp"
 #include "includes/transactionPool.hpp"
 
-void mineBlocks(Block &block, int numOfCandidates, vector<Transaction> &transactions, int nblockTransactions) {
-    vector <Block> blocks;
-    blocks.reserve(numOfCandidates);
-    for (int i = 0; i < numOfCandidates; i++) {
-        blocks.emplace_back(block);
-    }
-
-    for (Block &block : blocks) {
-        block.addTransactions(transactions);
-    }
-}
-
 int main() {
 
     int userNumber = 1000;
@@ -48,36 +36,40 @@ int main() {
     stringstream stream;
     
     while(pool.getTransactionNumber() > 0) {
-        if (!blockchain.isEmpty()) {
-            prevBlockHash = blockchain.getLastBlockHash();
+        prevBlockHash = blockchain.isEmpty() ? genesisBlockHash : blockchain.getLastBlockHash();
+    
+        vector<Block> blocks;
+        for (int i = 0; i < numOfCandidates; i++) {
+            vector<Transaction> transactions;
+            transactions = pool.getTransactions(blockTransactions);
+
+            Block candidate(prevBlockHash, difficulty);
+            candidate.index = i;
+            candidate.addTransactions(transactions);
+            blocks.push_back(candidate);
         }
-        else {
-            prevBlockHash = genesisBlockHash;
-        }
 
-        Block block(prevBlockHash, difficulty, 1.0);
+        Block iskastasBlokas;
+        while(!iskastasBlokas.isMined) {
+            for (int i = 0; i < numOfCandidates; i++) {
+                blocks[i].mineBlock();
+                if (blocks[i].isMined) {
+                    iskastasBlokas = blocks[i];
+                    break;
+                }
+            }
+        }        
 
-        vector<Transaction> transactions;
-        transactions = pool.getTransactions(blockTransactions);
+        cout << "Candidate index: " << iskastasBlokas.index << endl;
 
-        block.addTransactions(transactions);
-
-        cout << "Mining block: " << index << endl;
-        auto start = std::chrono::high_resolution_clock::now();
-        block.mine();
-        auto end = std::chrono::high_resolution_clock::now();
-        auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(end - start);
-        cout << "Mining completed" << endl;
-        cout << elapsed.count() << endl;
-
-        pool.removeTransactions(transactions);
+        pool.removeTransactions(iskastasBlokas.getTransactions());
         pool.checkIdAndExecute();
 
-        blockchain.addBlock(block);
+        blockchain.addBlock(iskastasBlokas);
 
         stream << "Block index: " << index << endl;
-        stream << block.toSString();
-        stream << string(50, '-') << endl;
+        stream << iskastasBlokas.toSString();
+        stream << string(50, '*') << endl;
 
         index++;
     }

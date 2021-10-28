@@ -24,6 +24,10 @@ int Blockchain::countTransactions() {
     return count;
 }
 
+Block Blockchain::getRandomBlock() {
+    return blocks[RND::getIntegerInRange(0, blocks.size() - 1)];
+}
+
 string Blockchain::toSString() {
     stringstream stream;
     stream << endl << string(50, '-') << endl;

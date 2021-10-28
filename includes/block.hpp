@@ -13,25 +13,27 @@ class Block {
         string merkleRoot;
         int nonce = 0;
         vector<Transaction> transactions;
-        bool isMined;
 
     public:
-        Block(string prevBlockHash, int difficulty, double version);
+        Block();
+        Block(string prevBlockHash, int difficulty);
+        void mineBlock();
 
+        int index;
         string getMerkleRoot();
         void addTransactions(vector<Transaction> &);
         void addTransaction(Transaction &);
-        void mineMultipleBlocks(vector<Transaction> &candidates);
         void mine();
         string getBlockHash();
-        vector<Transaction> getTransactions();
+        vector<Transaction> &getTransactions();
         string toSString();
         string getTimestamp();
         int getTransactionNumber();
         int getTransactionVolumr();
         bool tryToMine();
 
-        int tries = 10000;
+        bool isMined;
+        int attempts = 1000;
         int difficulty;
         double version = 1.0;
 };
